@@ -8,7 +8,8 @@ import os
 args = sys.argv
 query= args[1]
 #url="https://search.yahoo.co.jp/image/search?p="+query+"&ei=UTF-8&fr=top_ga1_sa"
-url="https://search.yahoo.co.jp/image/search?p="+query+"&ei=UTF-8&save=0"
+#url="https://search.yahoo.co.jp/image/search?p="+query+"&ei=UTF-8&save=0"
+url="https://search.yahoo.co.jp/image/search?p="+query+"&rkf=1&dim=&ctype=&imw=0&imh=0&imc=&ei=UTF-8&xargs=7&b=0"
 images=[]
 responses=[]
 pattern = r".gif"
@@ -30,7 +31,8 @@ def getImage(url):
     bs=BeautifulSoup(res.text,"html.parser")
 
     #print(res.status_code)
-    for link in bs.find_all("img"):# imgタグを取得しlinkに入れる
+    idc=bs.find(id="gridlist")
+    for link in idc.find_all("img"):# imgタグを取得しlinkに入れる
         if link.get("src"):
             images.append(link.get("src"))# imagesリストに入れる
             #print("done")
@@ -42,10 +44,11 @@ def getImage(url):
         for next in rein.find_all("a"):
             #print(next)
             if next.get("href"):
+                print(next.get("href"))
                 responses.append(next.get("href"))
 
     else:
-        for target in images:# リストはrequests.getで読めないようなので一旦targetに入れる
+        for target in images[-20:-1]:# リストはrequests.getで読めないようなので一旦targetに入れる
             resp = requests.get(target)
             #print(resp)
             sleep(1)
@@ -60,8 +63,9 @@ def getImage(url):
 
 if __name__ == '__main__':
     getImage(url)
+    getImage(url)
     for (h,page) in enumerate(responses):
-        if h<4:
+        if h<10:
             print(h)
             print("go to Next page")
             getImage(page)
